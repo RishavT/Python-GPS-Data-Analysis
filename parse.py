@@ -25,7 +25,7 @@ def speed_ans(self, data_file):
 # Example list an dict
 dict_file = json_data
 # Sort the dict
-#sorted(dict, key=itemgetter(*['Speed']), reverse = True)
+#sorted(dict_file, key=itemgetter(*['Speed']), reverse = True)
 output = natsort.natsorted(dict_file, key=itemgetter(*['Speed']), reverse = True)
 
 pprint.pprint(output)
