@@ -11,24 +11,20 @@ import datetime
 import pprint
 from operator import itemgetter
 import natsort
+import matplotlib.pyplot as plt
+import numpy as np
+from collections import Counter
 
-data_file = "waypoints.json" #path to gps data file in json format.
 
-with open(data_file) as json_file:
-    json_data = json.load(json_file)
-    #pprint.pprint(json_data)
+
+#path to gps data file in json format.
+data_file = "waypoints.json"
 
 
 def speed_ans(self, data_file):
-	pass
+    pass
 
-# Example list an dict
-dict_file = json_data
-# Sort the dict
-#sorted(dict_file, key=itemgetter(*['Speed']), reverse = True)
-output = natsort.natsorted(dict_file, key=itemgetter(*['Speed']), reverse = True)
 
-pprint.pprint(output)
 
 def visualize_type(output):
     """Visualize data by category in a bar graph"""
@@ -37,7 +33,7 @@ def visualize_type(output):
     counter = Counter(item["Speed"] for item in output)
 
     # Set the labels which are based on the keys of our counter.
-    labels = tuple(counter.key("Speed"))
+    labels = counter.keys()
 
     # Set where the labels hit the x-axis
     xlocations = np.arange(len(labels)) + 0.5
@@ -62,3 +58,14 @@ def visualize_type(output):
     plt.savefig("Graph.png")
 
     plt.clf()
+
+
+
+if __name__ == '__main__':
+    with open(data_file) as f:
+        waypoints = json.load(f)
+
+    sorted_waypoints = natsort.natsorted(waypoints, key=itemgetter(*['Speed']), reverse = True)
+    pprint.pprint(sorted_waypoints)
+
+    visualize_type(sorted_waypoints)
