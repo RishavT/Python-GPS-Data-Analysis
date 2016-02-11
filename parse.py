@@ -68,4 +68,9 @@ if __name__ == '__main__':
     sorted_waypoints = natsort.natsorted(waypoints, key=itemgetter(*['Speed']), reverse = True)
     pprint.pprint(sorted_waypoints)
 
+    for e in sorted_waypoints:
+        for k, v in e.items():
+            if (k == 'Speed' or k == 'Timestamp'):
+                print k, v
+
     visualize_type(sorted_waypoints)
