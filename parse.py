@@ -66,11 +66,14 @@ if __name__ == '__main__':
         waypoints = json.load(f)
 
     sorted_waypoints = natsort.natsorted(waypoints, key=itemgetter(*['Speed']), reverse = True)
-    pprint.pprint(sorted_waypoints)
+    #pprint.pprint(sorted_waypoints)
 
     for e in sorted_waypoints:
         for k, v in e.items():
-            if (k == 'Speed' or k == 'Timestamp'):
+            if (k == 'Speed' and v >= 5): #Set the threshold to 5 mps for speed anything less will be ignored.
                 print k, v
+                for k, v in e.items():
+                    if (k == 'Timestamp'):
+                        print k, v
 
     visualize_type(sorted_waypoints)
