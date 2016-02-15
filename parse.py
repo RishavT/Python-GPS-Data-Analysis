@@ -87,30 +87,30 @@ if __name__ == '__main__':
             print 'Speed', e['Speed']
             print 'Timestamp', e['Timestamp']
 
-        # Calculate the acceleration at that point
-        # Since acceleration = dv/dt (differentiation of velocity w.r.t time)
-        # We'll call the differentiate function.
+            # Calculate the acceleration at that point
+            # Since acceleration = dv/dt (differentiation of velocity w.r.t time)
+            # We'll call the differentiate function.
 
-        # Since we're using the enumerate function, e is equivalent to
-        # sorted_waypoints[i]. Hence the earlier value would be sorted_waypoints[i-1]
-        # and the next value would be sorted_waypoints[i+1].
-        # We cannot get acceleration for either the starting or the ending point,
-        # Depending on whether we use i-1 or i+1. Both should be good if the
-        # timestamps are small enough.
+            # Since we're using the enumerate function, e is equivalent to
+            # sorted_waypoints[i]. Hence the earlier value would be sorted_waypoints[i-1]
+            # and the next value would be sorted_waypoints[i+1].
+            # We cannot get acceleration for either the starting or the ending point,
+            # Depending on whether we use i-1 or i+1. Both should be good if the
+            # timestamps are small enough.
 
-        # For now we'll use [i-1], so the starting point will not have acceleration
-        # defined.
+            # For now we'll use [i-1], so the starting point will not have acceleration
+            # defined.
 
-        if i==0:
-            continue
+            if i==0:
+                continue
 
-        previous_e = sorted_waypoints[i-1]
-        e['Acceleration'] = differentiate(v2=e['Speed'],
-                                          v1=previous_e['Speed'],
-                                          t2=e['Timestamp'],
-                                          t1=previous_e['Timestamp'])
+            previous_e = sorted_waypoints[i-1]
+            e['Acceleration'] = differentiate(v2=e['Speed'],
+                                              v1=previous_e['Speed'],
+                                              t2=e['Timestamp'],
+                                              t1=previous_e['Timestamp'])
 
-        print 'Acceleration', e['Acceleration']
+            print 'Acceleration', e['Acceleration']
 
 
     visualize_type(sorted_waypoints)
