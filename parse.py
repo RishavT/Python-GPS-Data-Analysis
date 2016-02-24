@@ -116,15 +116,26 @@ def calculate_acceleration(waypoints):
     return waypoints_with_acceleration
 
 def extract_good_points(waypoints):
+    """Function to extract relevant points from a list of waypoints
+    Parameters:
+    1. acceleration_treshold - minimum acceleration for a point to be considered good
+    2. time_buffer - the number of seconds of 'buffer' period for any new batch of good points
+                     For example, if time_buffer = 1, any new batch (except for the first)
+                     will start with a 1 second buffer of low acceleration JUST before the high
+                     acceleration starts to make the video look natural.
+    """
+    acceleration_treshold = 0
+    time_buffer = 1
     i = 1
     good_points = []
-    acceleration_treshold = 0
+    batch_number = 0
     while i < len(waypoints):
 
         if waypoints[i]['Acceleration'] < acceleration_treshold:
+            batch_number += 1
             # This means he's slowing down
             # We'll loop through the upcoming time slots
-            # and take the last 3 seconds of slowing down/ constant speed.
+            # and take the last time_buffer seconds of slowing down/ constant speed.
             # Basically if it's
             # slowdown/slowdown/slowdown/slowdown/constant/constant/speedup/speedup
             # We'll only keep slowdown/constant/constant/speedup/speedup
@@ -136,16 +147,20 @@ def extract_good_points(waypoints):
                     # This implies he's accelerating again.
                     # We take at max last 3 points of slow speed from now.
                     # This is the same as minimum of 3, total slow speed duration.
-                    j = i - min(i - 3, i - old_i)
+                    j = i - min(i - time_buffer, i - old_i)
                     while j <= i:
-                        good_points.append(waypoints[j])
+                        if len(good_points >= batch_number):
+                            good_points.append([])
+                        good_points[batch_number].append(waypoints[j])
                         j += 1
                     is_done = True
                 i += 1
         else:
             # This means the driver is constant or accelerating
-            # So we want this
-            good_points.append(waypoints[i])
+            # So we want this, it's a good point.
+            if len(good_points >= batch_number):
+                good_points.append([])
+            good_points[batch_number].append(waypoints[i])
         i += 1
         # print i
 
@@ -160,7 +175,12 @@ if __name__ == '__main__':
     waypoints_with_acceleration = calculate_acceleration(sorted_waypoints)
     # display(waypoints_with_acceleration)
     good_points = extract_good_points(waypoints_with_acceleration)
-    display(good_points)
+    for i,good_points_batch in enumerate(good_points):
+        print 'Batch Number %d' % (i+1)
+        print 'Start Time %f' % good_points_batch[0]['Timestamp']
+        print 'End Time %f' % good_points_batch[-1]['Timestamp']
+        display(good_points_batch)
+        print '\n'
 
     #pprint.pprint(sorted_waypoints)
     visualize_type(sorted_waypoints)
