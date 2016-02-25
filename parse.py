@@ -147,20 +147,20 @@ def extract_good_points(waypoints):
                     # This implies he's accelerating again.
                     # We take at max last 3 points of slow speed from now.
                     # This is the same as minimum of 3, total slow speed duration.
-                    j = i - min(i - time_buffer, i - old_i)
+                    j = i - min(time_buffer, i - old_i)
                     while j <= i:
-                        if len(good_points >= batch_number):
+                        if len(good_points) == batch_number:
                             good_points.append([])
                         good_points[batch_number].append(waypoints[j])
                         j += 1
                     is_done = True
                 i += 1
-        else:
-            # This means the driver is constant or accelerating
-            # So we want this, it's a good point.
-            if len(good_points >= batch_number):
-                good_points.append([])
-            good_points[batch_number].append(waypoints[i])
+
+        # This means the driver is constant or accelerating
+        # So we want this, it's a good point.
+        if len(good_points) == batch_number:
+            good_points.append([])
+        good_points[batch_number].append(waypoints[i])
         i += 1
         # print i
 
@@ -175,12 +175,31 @@ if __name__ == '__main__':
     waypoints_with_acceleration = calculate_acceleration(sorted_waypoints)
     # display(waypoints_with_acceleration)
     good_points = extract_good_points(waypoints_with_acceleration)
-    for i,good_points_batch in enumerate(good_points):
+    # Remove empty batches if any
+    good_points = [batch for batch in good_points if len(batch) > 0]
+
+    # Printing, for now
+    for i,batch in enumerate(good_points):
+        if len(batch) == 0:
+            continue
         print 'Batch Number %d' % (i+1)
-        print 'Start Time %f' % good_points_batch[0]['Timestamp']
-        print 'End Time %f' % good_points_batch[-1]['Timestamp']
-        display(good_points_batch)
+        # Check if batch is empty for some reason
+        print 'Start Time %f' % batch[0]['Timestamp']
+        print 'End Time %f' % batch[-1]['Timestamp']
+        display(batch)
         print '\n'
+
+    # Get start,end tuple list
+    # start_end_list = [(batch[0]['Timestamp'], batch[-1]['Timestamp']) for batch in good_points]
+    start_end_list = []
+    for batch in good_points:
+        entry = {
+            'start_time': batch[0]['Timestamp'],
+            'end_time': batch[-1]['Timestamp'],
+            'waypoints': batch
+        }
+        start_end_list.append(entry)
+    print start_end_list
 
     #pprint.pprint(sorted_waypoints)
     visualize_type(sorted_waypoints)
