@@ -189,14 +189,16 @@ if __name__ == '__main__':
         display(batch)
         print '\n'
 
-    # Get start,end tuple list
-    # start_end_list = [(batch[0]['Timestamp'], batch[-1]['Timestamp']) for batch in good_points]
+    # Get start,end list
     start_end_list = []
+    # Creating a list of dict objects
+    # Each object `obj` will have obj['start_time'] and obj['end_time']
     for batch in good_points:
         entry = {
             'start_time': batch[0]['Timestamp'],
             'end_time': batch[-1]['Timestamp'],
-            'waypoints': batch
+            # Uncomment the following line to unclude the actual set of points in start_end_list
+            # 'waypoints': batch,
         }
         start_end_list.append(entry)
     print start_end_list
